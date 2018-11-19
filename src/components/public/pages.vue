@@ -63,6 +63,7 @@ export default {
       },
       gopages(e){
       	this.thispage = e;
+      	this.$emit('onchangepage',e)
       }
   }
 

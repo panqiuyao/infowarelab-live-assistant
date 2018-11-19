@@ -1,10 +1,13 @@
-# liveassistant
+# 直播助手
 
-> live addistant by infowarelab
+> 直播助手项目前端源码,vue-cli
 
 ## Build Setup
 
 ``` bash
+#版本ｖ１
+包含聊天室，用户页面
+
 # install dependencies
 npm install
 
@@ -26,5 +29,3 @@ npm run e2e
 # run all tests
 npm test
 ```
-
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).

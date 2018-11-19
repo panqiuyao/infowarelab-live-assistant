@@ -12,12 +12,15 @@ import store from './vuex/store.js'
 
 Vue.config.productionTip = false
 
-import { Message,Button,Checkbox,Dialog} from 'element-ui';
+import { Message,Button,Checkbox,Loading } from 'element-ui';
 
 Vue.prototype.$message = Message;
 
+
+Vue.prototype.$loading = Loading.service;
+
+
 Vue.use(Button)
-Vue.use(Dialog);
 Vue.use(Checkbox);
 
 

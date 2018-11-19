@@ -40,7 +40,17 @@ module.exports = {
     // https://vue-loader.vuejs.org/en/options.html#cachebusting
     cacheBusting: true,
 
-    cssSourceMap: true
+    cssSourceMap: true,
+
+        proxyTable: {
+            '/api': {  //使用"/agent"来代替源地址
+                target: 'http://127.0.0.1', //源地址
+                changeOrigin: true, //改变源
+                pathRewrite: {
+                    '^/api': '/' //路径重写
+                }
+            }
+        }
   },
 
   build: {

@@ -6,7 +6,7 @@
                         <div class="chat_main">
                             <div class="chat_page scrollbar" ref="chatPage" :class="{active : tab == 'chat'}"  id="chat_page">
                                 <div class="chatPageHeight" ref="chatPageHeight" >
-                                    <div class="itms clearfix" v-for="item in chatList" :class="{myself :item.id == myInfo.id}"><div class="name" >{{item.nickname}}</div><div class="msg" v-html="HtmlDeCode(item.msg)"></div></div>
+                                    <div class="itms clearfix flex" v-for="item in chatList" :class="{myself :item.id == myInfo.id}"><div class="name" >{{item.nickname}}</div><div class="msg" v-html="HtmlDeCode(item.msg)"></div></div>
                                 </div>
                             </div>
                             <div class="user_list scrollbar" :class="{active : tab == 'user'}" >
@@ -33,7 +33,6 @@ export default {
   },
   data () {
     return {
-                webSocket   : this.$store.state.webSocket,                     //webSocket对象
                 roomId      : publicModel.data.chat.roomId,         //房间ID
                 nickname    : publicModel.data.chat.nickname,   //昵称
                 appId       : publicModel.data.chat.appId,           //APPId
@@ -58,8 +57,8 @@ export default {
     }
   },
   computed:{
-    status(){ 
-       return this.$store.state.chat.id
+    webSocket(){ 
+       return this.$store.state.webSocket
     }
   },
    mounted(){
@@ -104,7 +103,6 @@ export default {
     loadRongJs:function(){
 
         this.loadDataNum++;
-        console.log(this.loadDataNum)
     },
     bind:function(){
             var self = this;
@@ -245,7 +243,7 @@ export default {
 
 
                         self.$store.dispatch({type:'webSocket',data:webSocket,})
-                        self.webSocket = self.$store.state.webSocket
+
 
                 } else {
 

@@ -59,7 +59,7 @@ export default {
   components:{pagesCom},
   data () {
     return {
-      total:100,
+      total:1001,
       pagessize:1,
       thispage:1,
       checkAll: false,

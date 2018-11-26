@@ -5,6 +5,9 @@
 //import 'babel-polyfill';
 //if (Number.parseInt === undefined) Number.parseInt = window.parseInt;
 //if (Number.parseFloat === undefined) Number.parseFloat = window.parseFloat;
+
+
+
 import App from './App'
 import router from './router'
 import store from './vuex/store.js'

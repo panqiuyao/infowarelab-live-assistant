@@ -6,7 +6,7 @@
       chat:{
           id:publicModel.data.id,
           name:publicModel.data.name,
-          status:publicModel.data.status,
+          liveStatus:publicModel.data.liveStatus,
           statusValue:publicModel.data.statusValue,
           userNum:publicModel.data.userNum,
           chatTime:publicModel.data.chatTime,
@@ -16,6 +16,10 @@
       webSocket:null,
       chatInit:false,
       userCurrentPage:1,
+      room:{
+          ban: 0,
+          open: 1
+      },
       user:{
           "content": [
               {

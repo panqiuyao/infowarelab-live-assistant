@@ -33,13 +33,15 @@ export default {
   },
   data () {
     return {
+                uid         : publicModel.data.chat.uid,         //用户id
                 roomId      : publicModel.data.chat.roomId,         //房间ID
                 nickname    : publicModel.data.chat.nickname,   //昵称
                 appId       : publicModel.data.chat.appId,           //APPId
                 appSceret   : publicModel.data.chat.appSceret,  //APP秘钥
+                timestamp   : publicModel.data.chat.timestamp,     //timestamp
+                ip          : publicModel.data.chat.ip,     //ip
                 chatInput   : '',                       //消息框
                 myInfo      : {},                             //用户信息
-                chatList    : this.$store.state.chatList,                          //消息列表
                 userList    : [],                         //用户列表
                 userNum     : 0,                            //用户量
                 tab         : 'chat',                         //当前tab
@@ -48,6 +50,7 @@ export default {
             putdata:{
                 appId       :  publicModel.data.chat.appId,
                 appSceret   :  publicModel.data.chat.appSceret,
+                timestamp   :  publicModel.data.chat.timestamp,     //timestamp
                 roomId      :  publicModel.data.chat.roomId,
                 path        :  publicModel.data.chat.path,
                 nickname    :  publicModel.data.chat.nickname,
@@ -59,6 +62,9 @@ export default {
   computed:{
     webSocket(){ 
        return this.$store.state.webSocket
+    },
+    chatList(){ 
+       return  this.$store.state.chatList
     }
   },
    mounted(){
@@ -106,7 +112,7 @@ export default {
     },
     bind:function(){
             var self = this;
-            $('.wangEditor-textarea').keyup(function(event){
+            $(document).on('keyup','.wangEditor-textarea',function(e) {
                 if (event.ctrlKey && event.keyCode == 13) {
 
                     self.send_msg();
@@ -169,17 +175,20 @@ export default {
             if (self.webSocket != null) {
 
                 var method = "getOnLineUsers"
+
                 var json1 = {"token":self.appId,"method":method}
                 var msgStr = JSON.stringify(json1);
 
                 msgStr = encodeURI(msgStr);
                 var enmsgStr = self.encryptByDES(msgStr,self.appSceret);
 
-                var timestamp =  parseInt(new Date().getTime() / 1000);
-                var signature = CryptoJS.MD5(self.appSceret + timestamp).toString();
+                var timestamp =  self.timestamp;
+                var signature = CryptoJS.MD5(self.appSceret + enmsgStr).toString();
 
                 var requestJson = {"appId":self.appId,"timestamp":timestamp,"signature":signature,"encryptmsg":enmsgStr}
                 var requestStr = JSON.stringify(requestJson);
+
+
 
                 self.webSocket.send(requestStr);
 
@@ -226,17 +235,17 @@ export default {
 
             if ("WebSocket" in window) {
                 if (self.webSocket == null) {
-                    var msgJson = {"token":self.appId}
-                    var msgStr = JSON.stringify(msgJson);
-                    msgStr = encodeURIComponent(msgStr);
-                    var egStr = self.encryptByDES(msgStr,self.appSceret);
-                    var enmsgStr = self.encryptByDES(msgStr,self.appSceret);
 
+                    var msgJson = {"ip":self.ip};    
+                    var msgStr = JSON.stringify(msgJson);
+
+                    var enmsgStr = self.encryptByDES(msgStr,self.appSceret);    
+                    var timestamp =  self.timestamp;
+                    var signature = CryptoJS.MD5(self.appSceret + enmsgStr).toString();                    
                     enmsgStr = encodeURIComponent(enmsgStr);
 
-                    var timestamp =  parseInt(new Date().getTime() / 1000);
-                    var signature = CryptoJS.MD5(self.appSceret + timestamp).toString();
-                    var url = publicModel.data.chat.liveUrl+publicModel.data.chat.path+"/chat/" + self.roomId+"/"+self.nickname+"?timestamp="+timestamp+"&encryptmsg="+enmsgStr+"&signature="+signature+"&appId="+self.appId ;
+
+                    var url = publicModel.data.chat.liveUrl+publicModel.data.chat.path+"/chat/" + self.roomId+"/"+self.nickname+"?timestamp="+timestamp+"&encryptmsg="+enmsgStr+"&signature="+signature+"&appId="+self.appId+"&visitUid="+self.uid;
 
                     // 打开一个 web socket
                         var  webSocket = new WebSocket(url);
@@ -265,16 +274,15 @@ export default {
                             self.webSocket.close();
                         return;
                     }
+
                     //正常流程
                     if(retDate.type =="getOnLineUsers"){
-                        console.log(retDate)
+
                         //获取在线人数
-                        self.userList = retDate.data.onLinesUser;
-                        self.userNum = retDate.data.onlineCount;
+                        self.$store.dispatch({type:'userNum',data:{userNum:retDate.data.onlineCount}})
 
                     }
                     if(retDate.type =="updateRoom"){
-                        console.log(retDate)
 
                         //更新房间信息
                         $("#room_base").text(retDate.data);
@@ -286,7 +294,17 @@ export default {
 
                     if("joinRoom" == retDate.type ) {
                         //自己加入房间
-                        self.$store.dispatch({type:'myInfo',data:retDate.data})
+                        self.$store.dispatch({type:'myInfo',data:retDate.data.user})
+                        self.$store.dispatch({type:'room',data:retDate.data.room})
+
+
+
+                        if(self.uid ==  retDate.data.user.id){
+                                self.myInfo = retDate.data.user;
+                        }
+
+
+                        self.getOnline()
 
                     }
                     if( "boardcast" == retDate.type) {
@@ -298,8 +316,67 @@ export default {
 
                     if( "disConnect" == retDate.type) {
                         //别人加入
-                    //    self.getOnline()
+                           self.getOnline()
 
+                    }
+
+
+                    if( "roomBanStatus" == retDate.type) {
+
+                        //禁言
+                        if(retDate.code == 1){
+
+
+                            var msg = '聊提示已被管理员取消禁言'
+                            if(retDate.data == 1 ){
+                                msg = '聊提示已被管理员禁言'
+                            }
+                            var obJson ={
+                                id:'123333333333333333',
+                                msg:msg,
+                                nickname:'系统消息',
+                            }
+                             self.$store.dispatch({type:'chatList',data:obJson})
+                        }
+                    }
+                    if( "roomOpenStatus" == retDate.type) {
+                        //聊天室状态
+                        if(retDate.code == 1){
+
+                            var msg = '聊提示已被管理员关闭'
+                            if(retDate.data == 1 ){
+                                msg = '聊提示已被管理员打开'
+                            }
+                            var obJson ={
+                                id:'123333333333333333',
+                                msg:msg,
+                                nickname:'系统消息',
+                            }
+
+                             self.$store.dispatch({type:'chatList',data:obJson})
+
+
+
+                        }
+
+                    }
+
+
+                    if('liveStatus' == retDate.type){
+
+                        //直播状态
+                        var data = JSON.parse(retDate.data.replace(/'/g,'"'))
+
+
+                        self.$store.dispatch({type:'liveStatus',data:data.status})
+
+                        var obJson ={
+                            id:'123333333333333333',
+                            msg: '直播'+self.$store.state.chat.statusValue[self.$store.state.chat.liveStatus],
+                            nickname:'系统消息',
+                        }
+                        self.$store.dispatch({type:'chatList',data:obJson})
+                        self.upChatScrool()
                     }
                 };
 
@@ -318,7 +395,7 @@ export default {
         },
         //发消息
         send_msg:function(){
-            console.log('11111')
+
             var self = this;
             if (self.webSocket != null) {
 
@@ -333,15 +410,15 @@ export default {
                 }
 
                 var method="boardcast"
-                var msgJson = {"token":self.appId,"method":method,"data":self.HtmlEnCode(self.chatInput)}
+                var msgJson = {"uid":self.uid,"method":method,"data":self.HtmlEnCode(self.chatInput)}
                 var msgStr = JSON.stringify(msgJson);
 
 
                 msgStr = encodeURI(msgStr);
                 var enmsgStr = self.encryptByDES(msgStr,self.appSceret);
 
-                var timestamp =  parseInt(new Date().getTime() / 1000);
-                var signature = CryptoJS.MD5(self.appSceret + timestamp).toString();
+                var timestamp =  self.timestamp;
+                var signature = CryptoJS.MD5(self.appSceret + enmsgStr).toString();
 
                 var requestJson = {"appId":self.appId,"timestamp":timestamp,"signature":signature,"encryptmsg":enmsgStr}
                 var requestStr = JSON.stringify(requestJson);

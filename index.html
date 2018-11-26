@@ -16,19 +16,21 @@
     
     var path = 'http://172.16.3.130/live'
     publicModel.data = {
-        id:'100000000001052',
+        id:'100000000003566',
         name:'直播中直播中直播中',
+        site:'box',
         status:1,
-        statusValue:'直播中',
+        statusValue:['未开始','进行中','中断','结束'],
         userNum:5210,
         chatTime:50,
         path:path,
         chat:{
                 appId:'b4b1586f7872477291500b4be1e4394e',                 //聊天室appid
                 appSceret:'a38a42caba3510d4f1684d547bb7ed59',            //聊天室appSceret
-                roomId:'5555',                                          //聊天室roomId
+                timestamp:'1542704949',       //聊天室appSceret
+                roomId:'100000000003566',                                 //聊天室roomId
                 path:'/live-chat',                                       //聊天室path
-                liveUrl:'ws://172.16.3.130',                      //websoct　地址
+                liveUrl:'ws://172.16.3.130',                             //websoct　地址
                 nickname:'admin',                                       //用户名
                 visibility:true,                                        //是否显示聊天室
                 open:true,                                               //聊天室是否打开
@@ -39,6 +41,10 @@
             user:{
             //  url:'/api/live/app/user/assistant/visitlist.action'
               url:'/static/api/user.js'
+            },
+            ban:{
+            //  url:'/api/live/app/user/assistant/visitlist.action'
+              url:'/app/user/assistant/ban.action'
             }
         }
 

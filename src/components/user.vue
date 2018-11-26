@@ -64,7 +64,7 @@ export default {
         self.loadPopup = self.$loading({ background:'rgba(0,0,0,.5)',text:'正在加载中'});
 
         self.$store.dispatch({type:'user',data:{confid:publicModel.data.id,currentPage:self.$store.state.userCurrentPage,load:self.loadPopup}})
-    
+        
 
       },
       onchangepage:function(e){

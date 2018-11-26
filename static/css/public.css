@@ -124,7 +124,7 @@ body{ overflow: hidden; width: 100%; height: 100%; position: absolute; left:0; t
 .chat_text{position:absolute;bottom:0;height:100px;width:100%; left: 0px;}
 .wangEditor-container .wangEditor-drop-panel,.wangEditor-container .wangEditor-drop-menu{bottom:105px;}
 .wangEditor-textarea-container{height:65px!important;line-height:20px;border:none; text-align: left}
-.wangEditor-container .wangEditor-textarea{padding:0 5px;line-height:20px;margin-top:5px; min-height: auto !important;}
+.wangEditor-container .wangEditor-textarea{padding:0 5px;line-height:20px;margin-top:5px; min-height: 60px !important;}
 .wangEditor-container .wangEditor-textarea p{margin:0;}
 .chatBtn{width:70px;height:30px;line-height:30px;background:#fff;text-align:center;color:#000;border:1px solid #e5e5e5;
     top: 60px;

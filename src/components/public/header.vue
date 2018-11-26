@@ -3,8 +3,8 @@
       <div class="top">
        
             <div class="info f-left">
-                <div class="item name f-left fc-fff">{{ this.$store.state.chat.name}}</div>
-                <div class="item status f-left fc-000">{{ this.$store.state.chat.statusValue}}</div>
+                <div class="item name f-left fc-fff">{{this.$store.state.chat.name}}</div>
+                <div class="item status f-left fc-000">{{ this.$store.state.chat.statusValue[this.$store.state.chat.liveStatus]}}</div>
             </div>
             <div class="timeInfo f-right  fc-fff">
                 <div class="item time f-left">直播时长:{{ this.$store.getters.chatTime}}</div>
@@ -15,8 +15,8 @@
       </div>
       <div class="bottom">
           <label class="label">开放功能：</label>
-          <el-checkbox v-model="chatChecked" >聊天室</el-checkbox>
-          <el-checkbox v-model="chatSpeakChecked">禁言</el-checkbox>
+          <el-checkbox v-model="open"　 @change="openFun" >聊天室</el-checkbox>
+          <el-checkbox v-model="ban" 　 @change="banFun">禁言</el-checkbox>
          <!-- <el-checkbox v-model="checked">问答</el-checkbox>
           <el-checkbox v-model="checked">问卷</el-checkbox>
           <el-checkbox v-model="checked">资料下载</el-checkbox>-->
@@ -29,46 +29,31 @@ export default {
   name: 'headerCom',
   data () {
     return {
-        chatChecked:true,
-        chatSpeakChecked:true,
     }
   },
   watch:{
-      chatChecked(){
-         if(this.chatChecked){
-
-          this.$message({
-            message: '聊天室已打开',
-            type: 'success'
-          });
-         }else{
-
-          this.$message({
-            message: '聊天室关闭成功',
-            type: 'error'
-          });
-         }
-
-
-      },
-      chatSpeakChecked(){
-         if(this.chatSpeakChecked){
-
-          this.$message({
-            message: '聊天室全部禁言',
-            type: 'success'
-          });
-         }else{
-
-          this.$message({
-            message: '聊天室取消禁言',
-            type: 'error'
-          });
-         }
-      }
   },
   computed:{
+      open(){
+        if(this.$store.state.room.open == 1){
 
+          return true
+        }else{
+
+          return false
+        }
+        
+      },
+      ban(){
+
+        if(this.$store.state.room.ban == 1){
+
+          return true
+        }else{
+
+          return false
+        }
+      }
   },
   mounted(){
       this.init()
@@ -76,6 +61,18 @@ export default {
   },
   methods:{
       init(){
+
+      },
+      openFun(val){
+        var self  =this;
+
+       self.$store.dispatch({type:'open',data:{data:val,vue:this}})
+      },
+      banFun(val){
+
+        var self  =this;
+
+       self.$store.dispatch({type:'ban',data:{data:val,vue:this}})
 
       },
 

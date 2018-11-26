@@ -5,33 +5,32 @@ var publicModel = {
 	},
 	fun:{
 		 //转换时分秒
-	    formatSeconds:function (value) {
-	        var secondTime = parseInt(value);// 秒
-	        var minuteTime = 0;// 分
-	        var hourTime = 0;// 小时
-	        if(secondTime > 60) {
-	            minuteTime = parseInt(secondTime / 60);
-	            secondTime = parseInt(secondTime % 60);
-	            if(minuteTime > 60) {
-	                hourTime = parseInt(minuteTime / 60);
-	                minuteTime = parseInt(minuteTime % 60);
-	            }
-	        }
-	        var result ='';
+	    formatSeconds:function (value) { 
+	    var secondTime = parseInt(value);// 秒
+        var minuteTime = 0;// 分
+        var hourTime = 0;// 小时
 
-	        if(secondTime < 10) {
-	            result = "0" + parseInt(secondTime) 
-	        }else{
+        if(secondTime >= 60) {
+            minuteTime = parseInt(secondTime / 60);
+            secondTime = parseInt(secondTime % 60);
+            if(minuteTime >= 60) {
+                hourTime = parseInt(minuteTime / 60);
+                minuteTime = parseInt(minuteTime % 60);
+            }
+        }
 
-	             result = "" + parseInt(secondTime);
-	        }
-	        if(minuteTime < 10) {
-	            result = "0" + parseInt(minuteTime) + ":" + result;
-	        }
-	        if(hourTime < 10) {
-	            result = "0" + parseInt(hourTime) + ":" + result;
-	        }
-	        return result;
+        var result ='';
+
+        if(secondTime < 10)  secondTime = "0" + secondTime;
+
+        if(minuteTime < 10) minuteTime = "0" + minuteTime;
+
+        if(hourTime < 10)   hourTime = "0" + hourTime;
+
+        result =  hourTime+':'+minuteTime+':'+secondTime;
+
+
+        return result;
 	    },
 
 		dynamicLoadJs:function(url, callback) {
